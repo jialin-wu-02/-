@@ -1,2 +1,2 @@
 # バニラ ゲーム！
-Games Written By Vanilla Javascript.
+Games Written in Vanilla Javascript.
