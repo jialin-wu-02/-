@@ -5,4 +5,4 @@ Games Written in Vanilla Javascript.
 1. [ ] Snake (In Progress)
 2. [ ] 2048
 3. [ ] Ping Pong
-4. [ ] and more...
+4. [ ] Tank Battle
