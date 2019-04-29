@@ -2,88 +2,101 @@ var canvas = document.querySelector("canvas");
 
 var c = canvas.getContext("2d");
 
-let vx = 0;
-let dvx = 10;
-let vy = 0;
-let dvy = 0;
-let x = 0;
-let y = 0;
-let length = 80;
-let height = 40;
-let state = 0; // 0 for horizontal and 1 for vertical
+const unit = 40;
+const height = 600;
+const width = 600;
+
+let leftdirection;
+let rightdirection;
+let updirection;
+let downdirection;
 
 window.addEventListener("keydown", (event) => {
 	console.log(event.keyCode);
 	// 37, 38, 39, 40
 	// left, up, right, down
-	switch(event.keyCode) {
-		case 37:
-			dvx = -Math.abs(dvx);
-			dvy = 0;
-			state = 0;
-			break;
-		case 39:
-			dvx = Math.abs(dvx);
-			dvy = 0;
-			state = 0;
-			break;
-		case 38:
-			dvy = -Math.abs(dvy);
-			dvx = 0;
-			if (state === 0) {
-				dvy = 10;
-				state = 1;
-				var temp = length;
-				length = height;
-				height = temp;
-				console.log(length, height);
-			}
-			break;
-		case 40:
-			dvy = Math.abs(dvy);
-			dvx = 0;
-			state = 1;
-			break;
+	if (event.keyCode == 37 && !rightdirection) {
+		leftdirection = true;
+		updirection = false;
+		downdirection = false;
+	} else if (event.keyCode == 39 && !leftdirection) {
+		rightdirection = true;
+		updirection = false;
+		downdirection = false;
+	} else if (event.keyCode == 38 && !downdirection) {
+		rightdirection = false;
+		leftdirection = false;
+		updirection = true;
+	} else if (event.keyCode == 40 && !updirection) {
+		rightdirection = false;
+		leftdirection = false;
+		downdirection = true;
 	}
 })
 
 const drawBoard = () => {
-	for (var i = 0; i <= 600; i = i + 40) {
+	c.strokeStyle = "grey";
+	for (var i = 0; i <= width; i = i + unit) {
 		c.moveTo(0, i);
-		c.lineTo(600, i);
+		c.lineTo(height, i);
 	}
-	for (i = 0; i <= 600; i = i + 40) {
+	for (i = 0; i <= width; i = i + unit) {
 		c.moveTo(i, 0);
-		c.lineTo(i, 600);
+		c.lineTo(i, height);
 	}
-    c.strokeStyle = "grey";
     c.stroke();
 }
 
-// drawBoard();
+drawBoard();
 
-const Square = (x, y, length, height) => {
-	c.fillStyle = "blue";
-	c.fillRect(x, y, length, height);
+class Square {
+
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	draw() {
+		// console.log(unit, this.x);
+		c.fillStyle = "blue";
+		c.fillRect(this.x * unit, this.y * unit, unit, unit);
+	}
+
+	moveRight() {
+		this.x = this.x + 1;
+	}
 }
 
+
+const clearBoard = () => {
+	c.clearRect(0, 0, height, width);
+	drawBoard();
+}
+
+var x = 0;
+var y = 2;
+let a = new Square(x, y);
+let b = new Square(x + 1, y);
 
 const animate = () => {
-	requestAnimationFrame(animate)
-	c.clearRect(x, y, length, height);
-	x += dvx;
-	y += dvy;
-	if (x <= 0 || x >= 600) {
-		dvx = -dvx;
-	}
-	if (y <= 0 || y >= 600) {
-		dvy = -dvy;
-	}
-	Square(x, y, length, height);
+	clearBoard();
+	// a.draw();
+	b.draw();
+	// b.draw();
+	if (rightdirection) {
+		a.moveRight();
+		a.draw();
+	} 
+	// else if (leftdirection) {
+		// x -= 1;
+	// } else if (updirection) {
+	// 	y -= 1;
+	// } else if (downdirection) {
+	// 	y += 1;
+	// }
 }
 
-
-animate();
+setInterval(animate, 150);
 
 
 
