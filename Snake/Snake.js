@@ -1,7 +1,25 @@
 const unit = 20;
 const height = 600;
 const width = 600;
-let canvas = document.querySelector("canvas");
+let start = false;
+
+let background = document.getElementById("bg");
+
+let cbg = background.getContext("2d");
+
+cbg.strokeStyle = "grey";
+for (var i = 0; i <= width; i = i + unit) {
+	cbg.moveTo(0, i);
+	cbg.lineTo(height, i);
+}
+for (i = 0; i <= width; i = i + unit) {
+	cbg.moveTo(i, 0);
+	cbg.lineTo(i, height);
+}
+
+cbg.stroke();
+
+let canvas = document.getElementById("game");
 let scores = [0];
 
 let c = canvas.getContext("2d");
@@ -12,22 +30,31 @@ const askAgain = (score) => {
 	document.getElementById("highestscore").innerHTML = "Highest: " + Math.max(...scores);
 }
 
-const drawBoard = () => {
-	c.strokeStyle = "grey";
-	for (var i = 0; i <= width; i = i + unit) {
-		c.moveTo(0, i);
-		c.lineTo(height, i);
+window.addEventListener("keydown", (event) => {
+	if (!start) {
+		if (event.keyCode === 13) {
+			restart();
+		}
 	}
-	for (i = 0; i <= width; i = i + unit) {
-		c.moveTo(i, 0);
-		c.lineTo(i, height);
-	}
-    c.stroke();
-}
 
-const clearBoard = (x, y) => {
+})
+
+// const drawBoard = () => {
+// 	c.strokeStyle = "grey";
+// 	for (var i = 0; i <= width; i = i + unit) {
+// 		c.moveTo(0, i);
+// 		c.lineTo(height, i);
+// 	}
+// 	for (i = 0; i <= width; i = i + unit) {
+// 		c.moveTo(i, 0);
+// 		c.lineTo(i, height);
+// 	}
+//     c.stroke();
+// }
+
+const clearBoard = () => {
 	c.clearRect(0, 0, height, width);
-	drawBoard();
+	// drawBoard();
 }
 
 const drawSquare = (x, y, color) => {
@@ -61,9 +88,9 @@ const snakeOverlap = (snake, randomX, randomY) => {
 	return false;
 }
 
+
 const game = () => {
 
-	let start = false;
 	let foodEaten = true;
 
 	let leftdirection = false;
@@ -188,6 +215,7 @@ const game = () => {
 		// eat itself
 		if (snakeOverlap(snake.slice(1, snake.length), snake[0].x, snake[0].y)) {
 			clearInterval(timer);
+			start = false;
 			scores.push(numberFoodEaten * 100);
 			askAgain(numberFoodEaten * 100);
 		}
@@ -197,6 +225,7 @@ const game = () => {
 			|| snake[0].x > width / unit - 1 
 			|| snake[0].y > height / unit - 1) {
 			clearInterval(timer);
+			start = false;
 			scores.push(numberFoodEaten * 100);
 			askAgain(numberFoodEaten * 100);
 		}

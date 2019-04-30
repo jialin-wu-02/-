@@ -1,7 +1,17 @@
 canvas {
 	border: 1px solid black;
-    margin: 20px auto;
-    display: block;
+    position: absolute;
+    left: 50%;
+    top: 55%;
+	transform: translate(-50%, -50%);
+}
+
+#bg {
+	z-index: 0;
+}
+
+#game {
+	z-index: 1;
 }
 
 p {
@@ -23,6 +33,7 @@ p {
 }
 
 #card {
+	z-index: 2;
 	display: none;
 	position: absolute;
 	background-color: white;
