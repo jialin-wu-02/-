@@ -39,22 +39,8 @@ window.addEventListener("keydown", (event) => {
 
 })
 
-// const drawBoard = () => {
-// 	c.strokeStyle = "grey";
-// 	for (var i = 0; i <= width; i = i + unit) {
-// 		c.moveTo(0, i);
-// 		c.lineTo(height, i);
-// 	}
-// 	for (i = 0; i <= width; i = i + unit) {
-// 		c.moveTo(i, 0);
-// 		c.lineTo(i, height);
-// 	}
-//     c.stroke();
-// }
-
 const clearBoard = () => {
 	c.clearRect(0, 0, height, width);
-	// drawBoard();
 }
 
 const drawSquare = (x, y, color) => {
@@ -123,6 +109,7 @@ const game = () => {
 	let y = Math.floor(Math.random() * (height / unit - 3));
 	let numberFoodEaten = -1; // a free food eaten, therefore get rid of it by -1.
 
+
 	snake[0] = {x : x + 3, y: y}; // always the head of the snake
 	snake[1] = {x : x + 2, y: y};
 	snake[2] = {x : x + 1, y: y};
@@ -138,9 +125,11 @@ const game = () => {
 			console.log(event.keyCode);
 			// 37, 38, 39, 40
 			// left, up, right, down
-
+			console.log(snake);
 			// when user press left in the start, snake needs to inverse its head.
-			if (event.keyCode == 37 && start == false) {
+			// only if 0's x is bigger than 1's x,
+			// otherwise no need to reverse.
+			if (event.keyCode == 37 && start == false && snake[0].x > snake[1].x) {
 				start = true;
 				snake.reverse();
 			}
