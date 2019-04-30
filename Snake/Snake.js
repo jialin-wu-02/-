@@ -1,18 +1,16 @@
 const unit = 20;
 const height = 600;
 const width = 600;
-
-let start = false;
-let foodEaten = true;
-
-let leftdirection = false;
-let rightdirection = false;
-let updirection = false;
-let downdirection = false;
-
 let canvas = document.querySelector("canvas");
+let scores = [0];
 
 let c = canvas.getContext("2d");
+
+const askAgain = (score) => {
+	document.getElementById("card").style.display = "block";
+	document.getElementById("endscore").innerHTML = "Score: " + score;
+	document.getElementById("highestscore").innerHTML = "Highest: " + Math.max(...scores);
+}
 
 const drawBoard = () => {
 	c.strokeStyle = "grey";
@@ -27,7 +25,6 @@ const drawBoard = () => {
     c.stroke();
 }
 
-
 const clearBoard = (x, y) => {
 	c.clearRect(0, 0, height, width);
 	drawBoard();
@@ -39,19 +36,18 @@ const drawSquare = (x, y, color) => {
 }
 
 const drawSnake = (snake) => {
-	drawSquare(snake[0].x, snake[0].y, "blue");
+	drawSquare(snake[0].x, snake[0].y, "#2B97FF");
 	for (var i = 1; i < snake.length; i++) {
-		drawSquare(snake[i].x, snake[i].y, "blue");
+		drawSquare(snake[i].x, snake[i].y, "#2B97FF");
 	}
 }
 
-const getNewFoodPosition = () => {
+const getNewFoodPosition = (snake) => {
 	let randomX = Math.floor(Math.random() * (width / unit - 1));
 	let randomY = Math.floor(Math.random() * (height / unit - 1));
 	if (snakeOverlap(snake, randomX, randomY)) {
-		return getNewFoodPosition();
+		return getNewFoodPosition(snake);
 	} else {
-		foodEaten = false;
 		return [randomX, randomY];
 	}
 }
@@ -65,101 +61,161 @@ const snakeOverlap = (snake, randomX, randomY) => {
 	return false;
 }
 
-const move = () => {
-	let dx = 0;
-	let dy = 0;
-	if (rightdirection) {
-		dx = 1;
-	} else if (leftdirection) {
-		dx = -1;
-	} else if (updirection) {
-		dy = -1;
-	} else if (downdirection) {
-		dy = 1;
+const game = () => {
+
+	let start = false;
+	let foodEaten = true;
+
+	let leftdirection = false;
+	let rightdirection = false;
+	let updirection = false;
+	let downdirection = false;
+
+	const move = () => {
+		let dx = 0;
+		let dy = 0;
+		if (rightdirection) {
+			dx = 1;
+		} else if (leftdirection) {
+			dx = -1;
+		} else if (updirection) {
+			dy = -1;
+		} else if (downdirection) {
+			dy = 1;
+		}
+		for (let i = snake.length - 1; i >= 1; i--) {
+			snake[i].x = snake[i-1].x;
+			snake[i].y = snake[i-1].y;
+		}
+		snake[0].x += dx;
+		snake[0].y += dy;
 	}
-	for (let i = snake.length - 1; i >= 1; i--) {
-		snake[i].x = snake[i-1].x;
-		snake[i].y = snake[i-1].y;
+
+	let snake = [];
+	let x = Math.floor(Math.random() * (width / unit - 3));
+	let y = Math.floor(Math.random() * (height / unit - 3));
+	let numberFoodEaten = -1; // a free food eaten, therefore get rid of it by -1.
+
+	snake[0] = {x : x + 3, y: y}; // always the head of the snake
+	snake[1] = {x : x + 2, y: y};
+	snake[2] = {x : x + 1, y: y};
+	snake[3] = {x : x, y: y};
+
+	let food = getNewFoodPosition(snake);
+	let justPressed = false; // handle lagging, get rid 
+
+	window.addEventListener("keydown", (event) => {
+
+		if (!justPressed) {
+			justPressed = true;
+			console.log(event.keyCode);
+			// 37, 38, 39, 40
+			// left, up, right, down
+
+			// when user press left in the start, snake needs to inverse its head.
+			if (event.keyCode == 37 && start == false) {
+				start = true;
+				snake.reverse();
+			}
+			if (event.keyCode == 37 && !rightdirection) {
+				start = true;
+				leftdirection = true;
+				updirection = false;
+				downdirection = false;
+			} else if (event.keyCode == 39 && !leftdirection) {
+				start = true;
+				rightdirection = true;
+				updirection = false;
+				downdirection = false;
+			} else if (event.keyCode == 38 && !downdirection) {
+				start = true;
+				rightdirection = false;
+				leftdirection = false;
+				updirection = true;
+			} else if (event.keyCode == 40 && !updirection) {
+				start = true;
+				rightdirection = false;
+				leftdirection = false;
+				downdirection = true;
+			}
+		}
+
+	})
+
+
+	const addSnake = (numberFoodEaten) => {
+		if (numberFoodEaten <= 6) {
+			var addNumber = 2;
+		} else if (numberFoodEaten <= 12) {
+			var addNumber = 4;
+		} else {
+			var addNumber = 8;
+		}
+
+		for (var i = 0; i < addNumber; i++) {
+			snake[snake.length] = {x : snake[snake.length - 1].x, y: snake[snake.length - 1].y};
+		}
+
 	}
-	snake[0].x += dx;
-	snake[0].y += dy;
+
+
+	const animate = () => {
+		clearBoard();
+		drawSnake(snake);
+		justPressed = false;
+
+		if (foodEaten) {
+			foodEaten = false;
+			food = getNewFoodPosition(snake);
+			numberFoodEaten += 1;
+			score = document.getElementsByClassName('score');
+			score[0].innerHTML = "Score: " + numberFoodEaten * 100
+		}
+
+		if (numberFoodEaten <= 6) {
+			drawSquare(food[0], food[1], "#FFD73C");
+		} else if (numberFoodEaten <= 12) {
+			drawSquare(food[0], food[1], "#EB952D");
+		} else {
+			drawSquare(food[0], food[1], "#FF5326");
+		}
+		
+		if (snake[0].x == food[0] && snake[0].y == food[1]) {
+			foodEaten = true;
+			addSnake(numberFoodEaten);
+		}
+
+		// eat itself
+		if (snakeOverlap(snake.slice(1, snake.length), snake[0].x, snake[0].y)) {
+			clearInterval(timer);
+			scores.push(numberFoodEaten * 100);
+			askAgain(numberFoodEaten * 100);
+		}
+
+		// edges detection
+		if (snake[0].x < 0 || snake[0].y < 0 
+			|| snake[0].x > width / unit - 1 
+			|| snake[0].y > height / unit - 1) {
+			clearInterval(timer);
+			scores.push(numberFoodEaten * 100);
+			askAgain(numberFoodEaten * 100);
+		}
+		if (start) {
+			move();
+		}
+	}
+
+	var timer = setInterval(animate, 110);
+
 }
 
-let snake = [];
-let x = Math.floor(Math.random() * (width / unit - 3));
-let y = Math.floor(Math.random() * (height / unit - 3));
+var timer1 = game();
 
-snake[0] = {x : x + 3, y: y}; // always the head of the snake
-snake[1] = {x : x + 2, y: y};
-snake[2] = {x : x + 1, y: y};
-snake[3] = {x : x, y: y};
-
-let food = getNewFoodPosition();
-
-window.addEventListener("keydown", (event) => {
-	console.log(event.keyCode);
-	// 37, 38, 39, 40
-	// left, up, right, down
-
-	// when user press left in the start, snake needs to inverse its head.
-	if (event.keyCode == 37 && start == false) {
-		start = true;
-		snake.reverse();
-	}
-	if (event.keyCode == 37 && !rightdirection) {
-		start = true;
-		leftdirection = true;
-		updirection = false;
-		downdirection = false;
-	} else if (event.keyCode == 39 && !leftdirection) {
-		start = true;
-		rightdirection = true;
-		updirection = false;
-		downdirection = false;
-	} else if (event.keyCode == 38 && !downdirection) {
-		start = true;
-		rightdirection = false;
-		leftdirection = false;
-		updirection = true;
-	} else if (event.keyCode == 40 && !updirection) {
-		start = true;
-		rightdirection = false;
-		leftdirection = false;
-		downdirection = true;
-	}
-})
-
-
-const animate = () => {
-	clearBoard();
-	if (foodEaten) {
-		food = getNewFoodPosition();
-	}
-	drawSquare(food[0], food[1], "red");
-	drawSnake(snake);
-	if (snake[0].x == food[0] && snake[0].y == food[1]) {
-		foodEaten = true;
-		snake[snake.length] = {x : snake[snake.length - 1].x, y: snake[snake.length - 1].y};
-		snake[snake.length] = {x : snake[snake.length - 1].x, y: snake[snake.length - 1].y};
-	}
-
-	// eat itself
-	if (snakeOverlap(snake.slice(1, snake.length), snake[0].x, snake[0].y)) {
-		clearInterval(timer);
-	}
-
-	// edges detection
-	if (snake[0].x < 0 || snake[0].y < 0 
-		|| snake[0].x > width / unit - 1 
-		|| snake[0].y > height / unit - 1) {
-		clearInterval(timer);
-	}
-	if (start) {
-		move();
-	}
+const restart = () => {
+	document.getElementById("card").style.display = "none";
+	clearInterval(timer1);
+	timer1 = game();
 }
-
-var timer = setInterval(animate, 110);
 
 
 

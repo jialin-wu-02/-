@@ -6,10 +6,13 @@
 	<title>A Little Cute Snake Game</title>
 </head>
 <body>
-	<div>
-		<canvas width="600px" height="600px">  </canvas>
+	<p id="highestscore"> Highest: 0 </p>
+	<p class="score"> Score: 0 </p>
+	<canvas width="600px" height="600px">  </canvas>
+	<div id="card">
+		<p id="endscore"> Score: 0 </p>
+		<button onclick="restart()"> Again </button>
 	</div>
-	<!-- <button onclick="restart()"> Restart </button> -->
 	<script src="Snake.js"></script>
 </body>
 </html>

@@ -1,5 +1,66 @@
 canvas {
 	border: 1px solid black;
-    margin: 50px auto;
+    margin: 20px auto;
     display: block;
 }
+
+p {
+	text-align: center;
+	font-family: monaco;
+	margin-bottom: 0px;
+}
+
+.score {
+	font-size: 25px;
+	padding: 0;
+	margin-top: 8px;
+}
+
+#highestscore {
+	font-size: 35px;
+	padding: 0;
+	margin-top: 15px;
+}
+
+#card {
+	display: none;
+	position: absolute;
+	background-color: white;
+	width: 400px;
+	height: 250px;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	border-radius: 15px;
+	/*border: solid 1px black;*/
+	filter: drop-shadow(0 0 0.72rem #B4B4B4);
+}
+
+#card button {
+	position: absolute;
+	background-color: lightblue;
+	border: none;
+	width: 70px;
+	height: 40px;
+	left: 50%;
+	top: 70%;
+	transform: translate(-50%, -50%);
+	font-size: 15px;
+	font-family: monaco;
+}
+
+#card button:hover {
+	background-color: #2EB8FF;
+}
+
+#card button:active, button:focus{
+	outline: none;
+	background-color: #2EACFF;
+}
+
+#card p {
+	margin-top: 20%;
+	font-size: 30px;
+}
+
+
