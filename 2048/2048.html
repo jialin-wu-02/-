@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<link rel="stylesheet" type="text/css" href="2048.css">
 	<meta charset="UTF-8">
 	<title>2048</title>
 </head>
 <body>
-	
-	
+	<canvas id="bg" width="600" height="600"> </canvas>
+	<canvas id="game" width="600" height="600">  </canvas>
+	<p id="highestscore"> Highest: 0 </p>
+	<p class="score"> Score: 0 </p>
+	<div id="card">
+		<p id="endscore"> Score: 0 </p>
+		<button onclick="restart()"> Again </button>
+	</div>
+	<script src="2048.js"></script>
 </body>
 </html>
